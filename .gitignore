@@ -1,0 +1,13 @@
+# Local channel state / secrets (never commit bot tokens or allowlists)
+.env
+*.env
+channels/
+**/access.json
+
+# OS / editor
+.DS_Store
+*.swp
+
+# Logs from local runs
+*.log
+status_snippet_log.local.md
