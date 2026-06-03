@@ -42,11 +42,11 @@ Exit codes: `0` sent (HTTP 2xx) · `1` no webhook URL / bad args · `2` send fai
    Copy URL** (`https://discord.com/api/webhooks/<id>/<token>`). (No bot, no
    pairing needed — a webhook posts to one channel, one-way.)
 2. Make it available to the script (first found wins):
-   - `export CAPTAIN_HOOK_WEBHOOK_URL='https://discord.com/api/webhooks/...'`  (best for CI/cron)
+   - `export CAPTAIN_HOOK_WEBHOOK_URL='https://discord.com/api/webhooks/...'`  (best for CI/cron; `DISCORD_WEBHOOK_URL` is also accepted as a fallback)
    - `echo 'https://discord.com/api/webhooks/...' > .captain-hook.url`  (gitignored; per-repo)
    - `echo 'https://discord.com/api/webhooks/...' > ~/.config/captain-hook/url`  (per-machine)
 
-The script validates the URL is a real Discord webhook and refuses anything else;
+The script validates the URL is a real Discord webhook (`discord.com`, `discordapp.com`, or `canary.discord.com`) and refuses anything else;
 `.captain-hook.url` is gitignored so a stored URL never lands in git. Other chat
 apps (Slack, Teams) expose analogous incoming webhooks — see the **OTHER
 CHANNELS** note at the bottom of `scripts/captain-hook.sh`.

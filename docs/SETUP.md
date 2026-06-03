@@ -39,8 +39,12 @@ Run sections 1–5 below yourself.
   - macOS: `brew install fswatch`
   - Linux: `apt-get install fswatch` (or your distro's package; a polling
     fallback ships in the skill if unavailable)
-- **Bun** — required by the official channel plugins:
+- **Bun** — required by the official channel plugins (used by `/monitor` and
+  `/qb-radio`; not needed for `/captain-hook`):
   `curl -fsSL https://bun.sh/install | bash`
+- **`curl` + `python3`** — required by `/captain-hook` only (for the HTTPS POST and
+  JSON formatting). Both ship by default on macOS and most Linux; no install needed
+  on a typical machine.
 
 ## 1. Install the monitor skill
 
@@ -175,10 +179,12 @@ status snippet via the active channel's `reply` tool (it reuses
 `MONITOR_DISCORD_CHAT_ID` / `MONITOR_TELEGRAM_CHAT_ID`, or the channel that last
 messaged you). Two-way: you can reply and the session sees it.
 
-### captain-hook — headless webhook (no bot, no plugin, no Bun)
+### captain-hook — zero-setup webhook (no bot, no plugin, no Bun)
 
-For cron, CI, and background runs where no plugin or live agent exists. It needs
-only a **webhook URL** and `curl` + `python3`.
+A status push that needs only a **webhook URL** + `curl`/`python3` — so it sends
+from anywhere a shell runs (a session, a one-off script, a job), and it's the
+**only** variant that works headless (cron, CI, background, where no plugin or live
+agent exists).
 
 ```sh
 cp -R skills/captain-hook .claude/skills/captain-hook   # optional (skill doc)
@@ -191,7 +197,7 @@ cp -R skills/captain-hook .claude/skills/captain-hook   # optional (skill doc)
    (`https://discord.com/api/webhooks/<id>/<token>`).
 2. **Make the URL available** (it's a secret — never commit; first found wins):
    ```sh
-   export CAPTAIN_HOOK_WEBHOOK_URL='https://discord.com/api/webhooks/ID/TOKEN'   # CI/cron
+   export CAPTAIN_HOOK_WEBHOOK_URL='https://discord.com/api/webhooks/ID/TOKEN'   # CI/cron (DISCORD_WEBHOOK_URL also accepted)
    echo  'https://discord.com/api/webhooks/ID/TOKEN' > .captain-hook.url          # gitignored, per-repo
    ```
 3. **Send:**

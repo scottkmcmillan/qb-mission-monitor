@@ -53,7 +53,7 @@ custom server to host.
 |---|---|
 | `skills/monitor/SKILL.md` | The `/monitor` skill — fswatch file watcher + channel relay |
 | `skills/qb-radio/SKILL.md` | The `/qb-radio` skill — active in-session push via the channel plugin (any `--channels` session) |
-| `skills/captain-hook/SKILL.md` | The `/captain-hook` skill — bot-free webhook push for headless/cron/CI |
+| `skills/captain-hook/SKILL.md` | The `/captain-hook` skill — bot-free webhook push from anywhere; the only option for headless (cron/CI/background) |
 | `scripts/captain-hook.sh` | The captain-hook sender (HTTPS POST to a chat webhook) |
 | `docs/HOW-IT-WORKS.md` | The architecture and why it's decoupled |
 | `docs/SETUP.md` | End-to-end setup (fswatch, bot, plugin, pairing, smoke test) |
@@ -104,6 +104,10 @@ claude --channels plugin:discord@claude-plugins-official
 # 4. Point the monitor at your run's status log
 #      /monitor docs/status_log.md
 ```
+
+For the push variants, the install is the same `cp -R skills/<name> .claude/skills/`
+pattern: `/qb-radio` needs only the channel plugin you set up above; `/captain-hook`
+needs only a webhook URL (no Bun/bot/plugin). See [`docs/SETUP.md`](docs/SETUP.md) step 6.
 
 Full instructions for either path, including the Discord bot creation steps and
 a smoke test, are in [`docs/SETUP.md`](docs/SETUP.md).

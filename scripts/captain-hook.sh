@@ -43,7 +43,7 @@ while [ $# -gt 0 ]; do
     --title)    TITLE="${2:-}"; shift 2 ;;
     --url)      URL_OVERRIDE="${2:-}"; shift 2 ;;
     --help|-h)
-      sed -n '2,33p' "$0" | sed 's/^# \{0,1\}//'
+      sed -n '2,32p' "$0" | sed 's/^# \{0,1\}//'
       exit 0 ;;
     *) MSG="$1"; shift ;;
   esac
