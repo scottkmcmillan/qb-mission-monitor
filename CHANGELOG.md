@@ -17,6 +17,13 @@ All notable changes to **qb-mission-monitor**. Date-based entries; newest first.
   across README, `docs/HOW-IT-WORKS.md`, and `docs/SETUP.md` (new step 6). All
   three share one channel and the same self-contained status-snippet bar.
 
+- **Cadence + checkpoint guidance** in both push skills (from real orchestrator
+  feedback): a concrete "meaningful checkpoint" positive/negative list, plus a
+  framework-agnostic way to make updates *recurring* — a copy-paste `CLAUDE.md`
+  standing rule (or a `Stop`/phase hook) — so one skill invocation doesn't quietly
+  become a single message. captain-hook documents the cron/CI schedule as its
+  trigger.
+
 ### Changed
 - README Requirements clarified per pattern (`/captain-hook` needs only a webhook
   URL + `curl`/`python3` — no Bun, bot, or plugin).

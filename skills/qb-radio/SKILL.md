@@ -59,8 +59,48 @@ no other context. Include, as applicable:
 
 Write it concise by default, thorough when the moment earns it (a result, an
 incident, a go/no-go). Lead with the headline; quantify; name the run/job/metric;
-surface bad news first and honestly. Push at **meaningful checkpoints only** — a
-gate, a result, a blocker, a final outcome — never per-step chatter.
+surface bad news first and honestly.
+
+## When to fire — what a "meaningful checkpoint" IS (and is not)
+
+**Fire at each of these (positive list):**
+- A **phase / stage / step gate** passed or failed.
+- A **test, eval, or check verdict** (a suite result, a benchmark score, a CI gate).
+- A **blocker, or a decision/input you need from the user** — send it immediately, don't sit on it.
+- A **destructive or irreversible operation** (migration, deploy, delete, cutover) — before and after.
+- The run **finishing**: success, failure, or aborted; and any notable incident/surprise.
+
+**Do NOT fire for (negative list):** per-file edits, individual tool calls, routine
+build/test chatter, sub-task spawns, or "still running." If a human wouldn't want a
+phone buzz for it, don't send it. When unsure: *gate / verdict / blocker / done →
+yes; mechanics → no.*
+
+## Durable cadence — one invocation ≠ one message
+
+A skill call is one-shot: invoking qb-radio once sends **one** message, then default
+behavior reverts to whatever you were doing. For updates across a long run the
+recurring behavior must be **anchored in something durable**, not in the model
+remembering (long runs get compacted and in-context intent decays). Two ways,
+strongest last:
+
+1. **Standing instruction (simplest, framework-agnostic).** Add this to your
+   project's `CLAUDE.md` (the same place [`/monitor`](../monitor/SKILL.md)'s
+   status-log rule lives), so the cadence holds for the whole run:
+   ```markdown
+   ## Status notifications (standing)
+   At every milestone — phase/stage gate, a test/eval verdict, a blocker or decision
+   needed, a destructive/irreversible op, and final success/failure — send a status
+   snippet via /qb-radio (interactive) or scripts/captain-hook.sh (headless). Keep
+   sending unprompted at each milestone until the run concludes. Not per-step.
+   ```
+2. **A hook (most robust, set-and-forget).** A Claude Code `Stop` /
+   phase-transition hook that fires the send can't be eroded by compaction — the
+   hook is the trigger, this skill is just the message framing. Wire one when a run
+   must not miss a ping.
+
+If you already drive work with an **orchestration / mission skill that has explicit
+phase gates**, the strongest option is to add the send to that gate step (it already
+knows when a milestone happened) — then the ping rides machinery you already trust.
 
 Example:
 ```

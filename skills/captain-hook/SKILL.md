@@ -48,7 +48,15 @@ Same bar as the [status-log pattern](../../docs/STATUS-LOG-PATTERN.md): a
 **headline/verdict first**, then **the numbers that matter**, **status**, any
 **blocker/decision/risk** (or explicit "no action needed"), and **what's next**.
 Concise by default, thorough when the moment earns it. Surface bad news first and
-honestly. Notify at meaningful checkpoints only — not per-step.
+honestly.
+
+**When to fire** — same checkpoint definition as [qb-radio](../qb-radio/SKILL.md#when-to-fire--what-a-meaningful-checkpoint-is-and-is-not):
+fire at a **gate, a test/eval verdict, a blocker or decision needed, a
+destructive/irreversible op (before & after), and final success/failure** — never
+per-step (per-file, per-tool, "still running"). For headless use the **trigger is
+your runtime**: put the `captain-hook.sh` call at the end of each cron job / CI
+stage / pipeline phase, so each scheduled checkpoint sends exactly one update. No
+in-context cadence to maintain — the schedule is the cadence.
 
 ## captain-hook vs qb-radio vs monitor
 | | transport | needs | use when |
