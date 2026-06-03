@@ -20,14 +20,13 @@ All notable changes to **qb-mission-monitor**. Date-based entries; newest first.
 - **Cadence + checkpoint guidance** in both push skills (from real orchestrator
   feedback): a concrete "meaningful checkpoint" positive/negative list, plus a
   framework-agnostic way to make updates *recurring* — a copy-paste `CLAUDE.md`
-  standing rule (or a `Stop`/phase hook) — so one skill invocation doesn't quietly
-  become a single message. captain-hook documents the cron/CI schedule as its
-  trigger.
+  standing rule (or a `Stop`/phase hook) — so one skill invocation doesn't just 
+  send one message and no more. Instead, captain-hook documents the cron/CI schedule
+  as its trigger.
 
 ### Changed
 - README Requirements clarified per pattern (`/captain-hook` needs only a webhook
   URL + `curl`/`python3` — no Bun, bot, or plugin).
-- `LICENSE` — corrected the copyright holder spelling to **Quarterback AI Inc.**
 
 ### Security
 - `.gitignore` now covers `.captain-hook.url` / `*.captain-hook.url`. The webhook
