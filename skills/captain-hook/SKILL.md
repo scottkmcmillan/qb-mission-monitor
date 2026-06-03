@@ -1,22 +1,31 @@
 ---
 name: captain-hook
-description: Send a chat notification via a bot-free incoming webhook (HTTPS POST) — headless-safe, so it works in scripts, cron, CI, and background/scheduled/autonomous runs where the Claude Code channel plugin and a live agent session are not available. Each message is a self-contained, well-written status snippet (headline/verdict, the numbers that matter, status, blockers/decisions, what's next). For interactive sessions with a channel plugin connected, prefer qb-radio.
+description: Send a status update to your chat channel via a bot-free incoming webhook — a plain HTTPS POST that needs nothing but a webhook URL (no bot, plugin, or pairing). Works from anywhere a shell runs — an interactive session, a one-off script, or a headless job — to push a self-contained status snippet (headline/verdict, the numbers that matter, status, blockers/decisions, what's next). One-way (post only). It's the only one of the three notifiers that works headless (cron/CI/background); for two-way updates that can read your replies in a live session, use qb-radio.
 version: 1.0.0
 triggers:
   - /captain-hook
 ---
 
-# captain-hook — bot-free webhook notifier
+# captain-hook — status updates via a bot-free webhook
 
-The headless sibling of [`qb-radio`](../qb-radio/SKILL.md). Where qb-radio pushes
-through the channel **plugin** (needs a live `--channels` session) and
-[`/monitor`](../monitor/SKILL.md) watches a file, **captain-hook is a plain HTTPS
-POST to a chat webhook** — no bot, no plugin, no agent session. That makes it the
-notifier for **cron, CI, and background/scheduled runs**.
+captain-hook sends a **status update** to your chat channel via a **webhook** — a
+plain HTTPS POST that needs nothing but a URL: no bot, no plugin, no pairing, no
+live agent session. Use it for any status ping you want to fire from a shell.
+
+Same job as [`qb-radio`](../qb-radio/SKILL.md) (notify your phone with a
+self-contained snippet); the difference is **transport**, not purpose: qb-radio
+goes through the channel **plugin** (two-way, needs a live `--channels` session),
+captain-hook goes through a **webhook** (one-way, needs only a URL). Because a
+webhook needs nothing else, captain-hook is the **only** option that works
+**headless** — so it's the choice for cron, CI, and background runs — but it's
+equally a zero-setup way to ping yourself from an interactive session or a one-off
+script. ([`/monitor`](../monitor/SKILL.md) is the third sibling: passive
+file-watch.)
 
 <default_to_action>
-Send via `scripts/captain-hook.sh`. Use this (not the plugin/bot) whenever the
-run is headless or no channel plugin is connected.
+Send via `scripts/captain-hook.sh` any time you want a status update out with no
+setup beyond a webhook URL. (For two-way updates that read your replies in a live
+session, use qb-radio.)
 </default_to_action>
 
 ## Usage
@@ -53,15 +62,17 @@ honestly.
 **When to fire** — same checkpoint definition as [qb-radio](../qb-radio/SKILL.md#when-to-fire--what-a-meaningful-checkpoint-is-and-is-not):
 fire at a **gate, a test/eval verdict, a blocker or decision needed, a
 destructive/irreversible op (before & after), and final success/failure** — never
-per-step (per-file, per-tool, "still running"). For headless use the **trigger is
-your runtime**: put the `captain-hook.sh` call at the end of each cron job / CI
-stage / pipeline phase, so each scheduled checkpoint sends exactly one update. No
-in-context cadence to maintain — the schedule is the cadence.
+per-step (per-file, per-tool, "still running"). **Cadence depends on where it runs:**
+from an agent/interactive context, fire it at each checkpoint yourself (the same
+recurring discipline as qb-radio's [Durable cadence](../qb-radio/SKILL.md#durable-cadence--one-invocation--one-message));
+from a script or scheduled job, place the `captain-hook.sh` call at each checkpoint
+in the script (e.g. end of a CI stage or cron run) — there the runtime is the
+trigger, so there's no in-context cadence to maintain.
 
 ## captain-hook vs qb-radio vs monitor
 | | transport | needs | use when |
 |---|---|---|---|
-| **captain-hook** | chat **webhook** (HTTPS POST) | only a webhook URL | headless — cron, CI, background/scheduled/autonomous runs, no plugin |
+| **captain-hook** | chat **webhook** (HTTPS POST) | only a webhook URL | any status ping with zero setup — from a session, a script, or **headless** (cron/CI/background, where it's the only option); one-way |
 | **qb-radio** | channel plugin `reply` | a live `--channels` session | interactive; can thread/attach; reads replies back |
 | **monitor** | file-watch → relay | `fswatch` + a status-log file | long run appending a status log you tail remotely |
 

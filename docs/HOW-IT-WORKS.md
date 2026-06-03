@@ -81,9 +81,11 @@ snippet) for runtimes where watching a file isn't the fit:
   `reply` tool directly at a milestone. No status-log file, no second watcher
   session; needs a session launched with `--channels`. Still two-way (it can read
   replies). Best for interactive work where you just want to ping yourself.
-- **`/captain-hook`** — a plain HTTPS POST to a chat **webhook** (`scripts/captain-hook.sh`).
-  No bot, no plugin, no agent session — so it runs **headless** in cron, CI, and
-  background jobs. One-way (post only). The webhook URL is the only credential.
+- **`/captain-hook`** — the same status push as a plain HTTPS POST to a chat
+  **webhook** (`scripts/captain-hook.sh`). Needs only a URL — no bot, no plugin, no
+  agent session — so it sends from anywhere a shell runs (a session, a one-off
+  script, a job) and is the **only** variant that works **headless** (cron, CI,
+  background). One-way (post only); the webhook URL is the only credential.
 
 The trade is transport vs. capability: a webhook needs nothing but a URL but
 can't read replies; the plugin is two-way but needs a live `--channels` session;

@@ -117,7 +117,7 @@ Next: opening the PR. No action needed." })
 |---|---|---|---|
 | **qb-radio** | active push via channel plugin `reply` | a live session launched with `--channels` | you're working interactively and want to ping at a milestone; can thread/attach |
 | **monitor** | passive file-watch → relay | `fswatch` + a status-log file | a long autonomous run that appends a status log you tail remotely |
-| **captain-hook** | active push via chat **webhook** (HTTPS POST) | only a webhook URL | headless — cron, CI, background/scheduled runs with no plugin or live agent |
+| **captain-hook** | active push via chat **webhook** (HTTPS POST) | only a webhook URL | any zero-setup status ping — from a session, a script, or **headless** (cron/CI/background, where it's the only option); one-way |
 
 Same channel, same snippet framing — pick the transport that fits the runtime.
 If no channel plugin is connected in this session, fall back to

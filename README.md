@@ -29,10 +29,13 @@ the right fit — all three deliver to the same channel, written to the same
 |---|---|---|---|
 | **`/monitor`** | passive file-watch → relay | `fswatch` + a status-log file | a long autonomous run appends a status log you follow remotely (decoupled producer; restart-safe; two-way) |
 | **`/qb-radio`** | active push via the channel **plugin** `reply` | a live session launched with `--channels` | you're working interactively and want to push at a milestone — no file needed; can thread/attach and read replies back |
-| **`/captain-hook`** | active push via a chat **webhook** (HTTPS POST) | only a webhook URL | **headless** — cron, CI, background/scheduled runs with no plugin or live agent; one-way |
+| **`/captain-hook`** | active push via a chat **webhook** (HTTPS POST) | only a webhook URL | any zero-setup status ping — from a session, a script, or **headless** (cron/CI/background, where it's the only option); one-way |
 
-Rule of thumb: **long run writing a log → `/monitor`** · **live interactive
-session → `/qb-radio`** · **headless cron/CI → `/captain-hook`**. See
+Rule of thumb: **long run writing a log → `/monitor`** · **live session, want
+replies back → `/qb-radio`** · **want a zero-setup ping from anywhere (and the
+only option when headless) → `/captain-hook`**. All three send the same status
+snippets; qb-radio and captain-hook overlap freely — pick by whether you need
+two-way (qb-radio) or just a fire-and-forget POST (captain-hook). See
 [`docs/SETUP.md`](docs/SETUP.md) for each.
 
 ## Why
