@@ -71,6 +71,26 @@ Because chat is bidirectional, this isn't just notifications: you can reply in
 Discord/Telegram and the monitoring session sees your message, so you can answer
 a question or redirect the autonomous run without returning to the terminal.
 
+## Push variants: qb-radio and captain-hook
+
+`/monitor` is the **passive** pattern — a file grows, the monitor relays. Two
+**active push** variants reuse the last mile (same channel, same self-contained
+snippet) for runtimes where watching a file isn't the fit:
+
+- **`/qb-radio`** — the agent in a live session calls the channel plugin's
+  `reply` tool directly at a milestone. No status-log file, no second watcher
+  session; needs a session launched with `--channels`. Still two-way (it can read
+  replies). Best for interactive work where you just want to ping yourself.
+- **`/captain-hook`** — a plain HTTPS POST to a chat **webhook** (`scripts/captain-hook.sh`).
+  No bot, no plugin, no agent session — so it runs **headless** in cron, CI, and
+  background jobs. One-way (post only). The webhook URL is the only credential.
+
+The trade is transport vs. capability: a webhook needs nothing but a URL but
+can't read replies; the plugin is two-way but needs a live `--channels` session;
+the file-watch monitor decouples the producer entirely but needs a file and
+`fswatch`. All three converge on the same channel and the same
+[snippet bar](STATUS-LOG-PATTERN.md).
+
 ## Why decoupled matters
 
 The three parts are independent — see

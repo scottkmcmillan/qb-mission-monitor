@@ -18,6 +18,23 @@ Claude Code's official channel plugins. Nothing in the coding logic depends on
 Discord or Telegram, so you can drop in any app Claude Code has a plugin for
 (Slack, MS Teams, etc.), or build your own.
 
+## Three ways to notify
+
+`/monitor` is the original, passive pattern (watch a file, relay new lines). Two
+active **push** variants ship alongside it for cases where watching a file isn't
+the right fit — all three deliver to the same channel, written to the same
+[self-contained-snippet bar](docs/STATUS-LOG-PATTERN.md).
+
+| Pattern | Transport | Needs | Use when |
+|---|---|---|---|
+| **`/monitor`** | passive file-watch → relay | `fswatch` + a status-log file | a long autonomous run appends a status log you follow remotely (decoupled producer; restart-safe; two-way) |
+| **`/qb-radio`** | active push via the channel **plugin** `reply` | a live session launched with `--channels` | you're working interactively and want to push at a milestone — no file needed; can thread/attach and read replies back |
+| **`/captain-hook`** | active push via a chat **webhook** (HTTPS POST) | only a webhook URL | **headless** — cron, CI, background/scheduled runs with no plugin or live agent; one-way |
+
+Rule of thumb: **long run writing a log → `/monitor`** · **live interactive
+session → `/qb-radio`** · **headless cron/CI → `/captain-hook`**. See
+[`docs/SETUP.md`](docs/SETUP.md) for each.
+
 ## Why
 
 Autonomous coding agents can run for an hour or longer. You shouldn't have to sit
@@ -32,6 +49,9 @@ custom server to host.
 | Path | What it is |
 |---|---|
 | `skills/monitor/SKILL.md` | The `/monitor` skill — fswatch file watcher + channel relay |
+| `skills/qb-radio/SKILL.md` | The `/qb-radio` skill — active in-session push via the channel plugin (any `--channels` session) |
+| `skills/captain-hook/SKILL.md` | The `/captain-hook` skill — bot-free webhook push for headless/cron/CI |
+| `scripts/captain-hook.sh` | The captain-hook sender (HTTPS POST to a chat webhook) |
 | `docs/HOW-IT-WORKS.md` | The architecture and why it's decoupled |
 | `docs/SETUP.md` | End-to-end setup (fswatch, bot, plugin, pairing, smoke test) |
 | `docs/STATUS-LOG-PATTERN.md` | How to make a coding session emit a watchable status log |
@@ -117,9 +137,10 @@ written.
 ## Requirements
 
 - Claude Code CLI
-- `fswatch` (polling fallback included for Linux without it)
-- Bun (for the official Discord/Telegram channel plugins)
-- A Discord or Telegram bot token
+- `fswatch` — for `/monitor` only (polling fallback included for Linux without it)
+- Bun — for the channel plugins, used by `/monitor` and `/qb-radio` (not captain-hook)
+- A Discord or Telegram **bot token** — for `/monitor` and `/qb-radio`
+- For **`/captain-hook`** only: a Discord **webhook URL** + `curl` and `python3` — no Bun, no bot, no plugin
 
 ## Security
 

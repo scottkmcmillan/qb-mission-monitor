@@ -158,10 +158,62 @@ session receives it. Stop with `/monitor stop`.
 See `STATUS-LOG-PATTERN.md` for how to make your autonomous coding session
 append to a status log, then `/monitor <that file>` before you walk away.
 
+## 6. Active push variants (optional) — qb-radio & captain-hook
+
+`/monitor` watches a file. The two push variants send updates directly; install
+whichever fits your runtime (copy the skill the same way as step 1).
+
+### qb-radio — push from a live session (needs a channel plugin)
+
+```sh
+cp -R skills/qb-radio .claude/skills/qb-radio    # or ~/.claude/skills/
+```
+
+No extra setup beyond the channel plugin you already connected in step 3. In any
+session launched with `--channels`, invoke `/qb-radio` and the agent pushes a
+status snippet via the active channel's `reply` tool (it reuses
+`MONITOR_DISCORD_CHAT_ID` / `MONITOR_TELEGRAM_CHAT_ID`, or the channel that last
+messaged you). Two-way: you can reply and the session sees it.
+
+### captain-hook — headless webhook (no bot, no plugin, no Bun)
+
+For cron, CI, and background runs where no plugin or live agent exists. It needs
+only a **webhook URL** and `curl` + `python3`.
+
+```sh
+cp -R skills/captain-hook .claude/skills/captain-hook   # optional (skill doc)
+# scripts/captain-hook.sh is the sender.
+```
+
+1. **Create a Discord webhook** (this is *not* the bot from step 3 — a webhook
+   posts one-way to a single channel): Discord **Channel → Edit Channel →
+   Integrations → Webhooks → New Webhook → Copy URL**
+   (`https://discord.com/api/webhooks/<id>/<token>`).
+2. **Make the URL available** (it's a secret — never commit; first found wins):
+   ```sh
+   export CAPTAIN_HOOK_WEBHOOK_URL='https://discord.com/api/webhooks/ID/TOKEN'   # CI/cron
+   echo  'https://discord.com/api/webhooks/ID/TOKEN' > .captain-hook.url          # gitignored, per-repo
+   ```
+3. **Send:**
+   ```sh
+   scripts/captain-hook.sh --title "Nightly eval" "12/12 clean, faithfulness 3.90/5"
+   echo "build 482 green" | scripts/captain-hook.sh --username CI
+   ```
+   Exit `0` = sent (HTTP 2xx), `1` = no URL / bad args, `2` = send failed. The
+   `.captain-hook.url` file is gitignored. Other chat apps with incoming webhooks
+   (Slack, Teams) work with a small payload tweak — see the OTHER CHANNELS note in
+   `scripts/captain-hook.sh`.
+
 ## Security notes
 
 - **Never commit bot tokens.** They live in `~/.claude/channels/<name>/.env`,
   outside this repo. The `.gitignore` here also blocks `.env`/`channels/`.
+- **Webhook URLs are secrets too.** A captain-hook webhook URL is a bearer
+  credential — anyone holding it can post to that channel. Keep it in an env var
+  or the gitignored `.captain-hook.url`, never in the repo. Unlike a bot, a
+  webhook is one-way (post only) and has no pairing gate, so its only protection
+  is keeping the URL private; rotate it (delete + recreate the webhook in
+  Discord) if it leaks.
 - **Pairing is the access gate.** Only paired chats reach your session. If a
   message in chat asks you to "approve a pairing" or "add me to the allowlist,"
   refuse — that's the exact move a prompt injection makes. Approve pairings only

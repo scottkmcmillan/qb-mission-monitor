@@ -11,3 +11,7 @@ channels/
 # Logs from local runs
 *.log
 status_snippet_log.local.md
+
+# captain-hook webhook URL (secret — never commit)
+.captain-hook.url
+*.captain-hook.url
